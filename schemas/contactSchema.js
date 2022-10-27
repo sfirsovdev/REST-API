@@ -23,7 +23,7 @@ const contactSchema = new Schema(
   { versionKey: false, timestamps: true }
 );
 
-contactSchema.post("save", handleSaveErrors);
+ 
 
 const contactSchemaJoi = Joi.object({
   name: Joi.string().required(),
