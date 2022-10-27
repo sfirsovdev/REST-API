@@ -5,7 +5,7 @@ const messages = {
   404: "Not found",
   409: "Conflict",
   500: "Internal Server Error",
-};
+
 
 const RequestError = (status, message = messages[status]) => {
   const error = new Error(message);
