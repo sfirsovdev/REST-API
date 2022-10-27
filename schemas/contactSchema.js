@@ -1,7 +1,7 @@
 const { Schema, model } = require("mongoose");
 const Joi = require("joi");
 
-const handleSaveErrors = require("../helpers/handelSaveErrors");
+// const handleSaveErrors = require("../helpers/handelSaveErrors");
 
 const contactSchema = new Schema(
   {
@@ -13,7 +13,7 @@ const contactSchema = new Schema(
       type: String,
     },
     phone: {
-      type: String,
+      type: String, 
     },
     favorite: {
       type: Boolean,
