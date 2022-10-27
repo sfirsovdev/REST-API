@@ -10,7 +10,10 @@ const ctrl = require("../../controllers/auth")
 
 const router = express.Router();
 
-//signup
+// signup
 router.post("/register", validationData(schemas.registerSchema), ctrlWrapper(ctrl.register))
+
+// signin
+router.post("/login", validationData(schemas.loginSchema), ctrlWrapper(ctrl.login))
 
 module.exports = router;
