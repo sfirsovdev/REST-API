@@ -1,19 +1,52 @@
-const express = require('express');
+const express = require("express");
 
 const validationData = require("../../middlewares/contactValidation");
-
+const upload = require("../../middlewares/upload");
 const ctrlWrapper = require("../../helpers/ctrlWrapper");
-
-const { schemas } = require("../../models/user")
-
-const ctrl = require("../../controllers/auth")
-
+const {
+  registSchemaJoi,
+  loginSchemaJoi,
+  updateSubJoi,
+} = require("../../schemas/user");
+const {
+  registerController,
+  loginController,
+  getCurrent,
+  logoutController,
+  updateSubController,
+  updateAvatar,
+} = require("../../controllers/authController");
+const verifyerToken = require("../../middlewares/verifyerToken");
 const router = express.Router();
 
-// signup
-router.post("/register", validationData(schemas.registerSchema), ctrlWrapper(ctrl.register))
+router.post(
+  "/signup",
+  validationData(registSchemaJoi),
+  ctrlWrapper(registerController)
+);
 
-// signin
-router.post("/login", validationData(schemas.loginSchema), ctrlWrapper(ctrl.login))
+router.post(
+  "/login",
+  validationData(loginSchemaJoi),
+  ctrlWrapper(loginController)
+);
+
+router.get("/current", verifyerToken, ctrlWrapper(getCurrent));
+
+router.get("/logout", verifyerToken, ctrlWrapper(logoutController));
+
+router.patch(
+  "/subscription",
+  verifyerToken,
+  validationData(updateSubJoi),
+  ctrlWrapper(updateSubController)
+);
+
+router.patch(
+  "/avatars",
+  verifyerToken,
+  upload.single("avatar"),
+  ctrlWrapper(updateAvatar)
+);
 
 module.exports = router;
