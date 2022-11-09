@@ -1,5 +1,4 @@
 const RequestError = require("../helpers/RequestError");
-
 const validationData = (schema) => {
   const func = (req, res, next) => {
     const { error } = schema.validate(req.body);
@@ -13,3 +12,4 @@ const validationData = (schema) => {
 };
 
 module.exports = validationData;
+
