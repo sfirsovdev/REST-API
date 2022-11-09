@@ -1,6 +1,7 @@
 const express = require("express");
 
 const validationData = require("../../middlewares/contactValidation");
+const upload = require("../../middlewares/upload");
 const ctrlWrapper = require("../../helpers/ctrlWrapper");
 const {
   registSchemaJoi,
@@ -13,6 +14,7 @@ const {
   getCurrent,
   logoutController,
   updateSubController,
+  updateAvatar,
 } = require("../../controllers/authController");
 const verifyerToken = require("../../middlewares/verifyerToken");
 const router = express.Router();
@@ -38,6 +40,13 @@ router.patch(
   verifyerToken,
   validationData(updateSubJoi),
   ctrlWrapper(updateSubController)
+);
+
+router.patch(
+  "/avatars",
+  verifyerToken,
+  upload.single("avatar"),
+  ctrlWrapper(updateAvatar)
 );
 
 module.exports = router;
