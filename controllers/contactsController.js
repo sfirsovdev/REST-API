@@ -8,11 +8,8 @@ const {
   updateStatusContact,
 } = require("../services/contacts");
 
-const getContacts = async (req, res) => {
-  const { _id } = req.user;
-  const { page = 1, limit = 20, favorite } = req.query;
-  const skip = (page - 1) * limit;
-  const contacts = await listContacts(_id, skip, +limit, favorite);
+const getContacts = async (_, res) => {
+  const contacts = await listContacts();
   res.status(200).json({ status: "success", code: 200, data: { contacts } });
 };
 
@@ -28,7 +25,6 @@ const getById = async (req, res) => {
 
 const deleteContact = async (req, res) => {
   const { id } = req.params;
-
   const result = await removeContact(id);
   if (!result) {
     throw RequestError(404);
@@ -54,9 +50,8 @@ const changeContact = async (req, res) => {
 
 const createContact = async (req, res) => {
   const { name, email, phone, favorite = false } = req.body;
-  const { _id } = req.user;
 
-  const newContact = await addContact(name, email, phone, favorite, _id);
+  const newContact = await addContact(name, email, phone, favorite);
   res.status(201).json({ status: "success", code: 201, data: { newContact } });
 };
 

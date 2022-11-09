@@ -1,14 +1,7 @@
 const { Contact } = require("../schemas/contactSchema");
 
-const listContacts = async (id, skip, limit) => {
-  const data = await Contact.find(
-    { owner: id, favorite: favorite || { $in: [true, false] } },
-    "",
-    {
-      skip,
-      limit,
-    }
-  ).populate("owner", "id email");
+const listContacts = async () => {
+  const data = await Contact.find();
   return data;
 };
 
@@ -22,14 +15,8 @@ const removeContact = async (contactId) => {
   return data;
 };
 
-const addContact = async (name, email, phone, favorite, id) => {
-  const data = await Contact.create({
-    name,
-    email,
-    phone,
-    favorite,
-    owner: id,
-  });
+const addContact = async (name, email, phone, favorite) => {
+  const data = await Contact.create({ name, email, phone, favorite });
   return data;
 };
 
