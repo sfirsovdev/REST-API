@@ -1,40 +1,46 @@
-const { Contact } = require("../schemas/contactSchema");
+const express = require("express");
 
-const listContacts = async () => {
-  const data = await Contact.find();
-  return data;
-};
+const {
+  getContacts,
+  getById,
+  createContact,
+  deleteContact,
+  changeContact,
+  updateStatus,
+} = require("../../controllers/contactsController");
+const ctrlWrapper = require("../../helpers/ctrlWrapper");
+const validationData = require("../../middlewares/contactValidation");
+const verifyerToken = require("../../middlewares/verifyerToken");
+const {
+  contactSchemaJoi,
+  updateStatusJoiSchema,
+} = require("../../schemas/contactSchema");
 
-const getContactById = async (contactId) => {
-  const data = await Contact.findById(contactId);
-  return data;
-};
+const router = express.Router();
 
-const removeContact = async (contactId) => {
-  const data = await Contact.findByIdAndRemove(contactId);
-  return data;
-};
+router.get("/", verifyerToken, ctrlWrapper(getContacts));
 
-const addContact = async (name, email, phone, favorite) => {
-  const data = await Contact.create({ name, email, phone, favorite });
-  return data;
-};
+router.get("/:id", ctrlWrapper(getById));
 
-const updateContact = async (contactId, body) => {
-  const data = await Contact.findByIdAndUpdate(contactId, body, { new: true });
-  return data;
-};
+router.post(
+  "/",
+  verifyerToken,
+  validationData(contactSchemaJoi),
+  ctrlWrapper(createContact)
+);
 
-const updateStatusContact = async (contactId, body) => {
-  const data = await Contact.findByIdAndUpdate(contactId, body, { new: true });
-  return data;
-};
+router.delete("/:id", ctrlWrapper(deleteContact));
 
-module.exports = {
-  listContacts,
-  getContactById,
-  removeContact,
-  addContact,
-  updateContact,
-  updateStatusContact,
-};
+router.put(
+  "/:id",
+  validationData(contactSchemaJoi),
+  ctrlWrapper(changeContact)
+);
+
+router.patch(
+  "/:id/favorite",
+  validationData(updateStatusJoiSchema),
+  ctrlWrapper(updateStatus)
+);
+
+module.exports = router;
