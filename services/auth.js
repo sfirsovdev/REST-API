@@ -1,51 +1,61 @@
-const { User } = require("../schemas/user");
+const express = require("express");
 
-const createUser = async (name, email, password, avatarURL) => {
-  const user = User.create({ name, email, password, avatarURL });
-  return user;
-};
+const validationData = require("../../middlewares/contactValidation");
+const upload = require("../../middlewares/upload");
+const ctrlWrapper = require("../../helpers/ctrlWrapper");
+const {
+  registSchemaJoi,
+  loginSchemaJoi,
+  updateSubJoi,
+  verifyEmailSchemaJoi,
+} = require("../../schemas/user");
+const {
+  registerController,
+  loginController,
+  getCurrent,
+  logoutController,
+  updateSubController,
+  updateAvatar,
+  verifyEmail,
+  resendVerifyEmail,
+} = require("../../controllers/authController");
+const verifyerToken = require("../../middlewares/verifyerToken");
+const router = express.Router();
 
-const userSearch = async (email) => {
-  const data = await User.findOne({ email });
-  return data;
-};
+router.post(
+  "/signup",
+  validationData(registSchemaJoi),
+  ctrlWrapper(registerController)
+);
 
-const signup = async (id, token) => {
-  const data = await User.findByIdAndUpdate(id, token);
-  return data;
-};
+router.post(
+  "/login",
+  validationData(loginSchemaJoi),
+  ctrlWrapper(loginController)
+);
 
-const logout = async (id, token) => {
-  const data = await User.findByIdAndUpdate(id, token);
-  return data;
-};
+router.get("/current", verifyerToken, ctrlWrapper(getCurrent));
 
-const updateStatus = async (id, status) => {
-  const data = await User.findByIdAndUpdate(id, status);
-  return data;
-};
+router.get("/logout", verifyerToken, ctrlWrapper(logoutController));
 
-const updateUserAvatar = async (id, avatarURL) => {
-  const data = User.findByIdAndUpdate(id, avatarURL);
-  return data;
-};
+router.patch(
+  "/subscription",
+  verifyerToken,
+  validationData(updateSubJoi),
+  ctrlWrapper(updateSubController)
+);
 
-const searchVerificationToken = async (verifyToken) => {
-  const data = await User.findOne(verifyToken);
-  return data;
-};
+router.patch(
+  "/avatars",
+  verifyerToken,
+  upload.single("avatar"),
+  ctrlWrapper(updateAvatar)
+);
+router.get("/verify/:verificationToken", ctrlWrapper(verifyEmail));
 
-const updateVerify = async (id, verify, verificationToken) => {
-  const data = await User.findByIdAndUpdate(id, verify, verificationToken);
-  return data;
-};
-module.exports = {
-  userSearch,
-  createUser,
-  signup,
-  logout,
-  updateStatus,
-  updateUserAvatar,
-  searchVerificationToken,
-  updateVerify,
-};
+router.post(
+  "/verify",
+  validationData(verifyEmailSchemaJoi),
+  ctrlWrapper(resendVerifyEmail)
+);
+module.exports = router;
